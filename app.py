@@ -2,6 +2,7 @@ import requests
 import customtkinter as ctk
 import json
 from PIL import Image
+import xmltodict
 
 
 
@@ -9,8 +10,36 @@ from PIL import Image
 
 app = ctk.CTk()
 
+
+
 with open('webhook.json', 'r') as arquivo:
     dados = json.load(arquivo)
+
+username = [dado['simbrief'] for dado in dados][0]
+url = f"https://www.simbrief.com/api/xml.fetcher.php?username={username}"
+
+response = requests.get(url)
+
+def enviar_simbrief():
+
+    if response.status_code == 200:
+        data = xmltodict.parse(response.content)
+        ofp = data.get("OFP", {})
+
+        origem = ofp.get("origin", {})
+        destino = ofp.get("destination", {})
+        aeronave = ofp.get("aircraft", {})
+        tempo_voo = ofp.get("general", {})
+        rota = ofp.get("atc", {})
+        piloto = ofp.get("crew", {})
+
+        entry_partida.insert(0, origem.get('icao_code'))
+        entry_chegada.insert(0, destino.get('icao_code'))
+        entry_piloto.insert(0, piloto.get('cpt'))
+        entry_aeronave.insert(0, f'{aeronave.get('icaocode')} | {aeronave.get('name')}')
+        entry_dist.insert(0, tempo_voo.get('route_distance'))
+        entry_rota.insert('1.0', f'{origem.get('icao_code')}/{origem.get('plan_rwy')} {rota.get('route')} {destino.get('icao_code')}/{destino.get('plan_rwy')}')
+        
 
 WEBHOOK_URL = [dado['url'] for dado in dados][0]
 
@@ -108,7 +137,7 @@ label_dev.place(x=20, y=560)
 label_dev.lower()
 
 label_erro = ctk.CTkLabel(app, text='', font=('Arial', 13, 'bold'), text_color='red')
-label_erro.place(x=500, y=530)
+label_erro.place(x=315, y=520)
 
 label_erro_disc = ctk.CTkLabel(app, text='', font=('Arial', 13, 'bold'), text_color='red')
 label_erro_disc.place(x=450, y=550)
@@ -138,7 +167,14 @@ entry_rota = ctk.CTkTextbox(app, width=580, height=160, text_color='black', bord
 entry_rota.place(x=100, y=330)
 
 btn_enviar = ctk.CTkButton(app, width=120, text='Enviar', font=('Arial', 14, 'bold'), text_color='white', fg_color='green', cursor='hand2', command=enviar_para_discord)
-btn_enviar.place(x=320, y=550)
+btn_enviar.place(x=250, y=550)
+
+btn_simbrief = ctk.CTkButton(app, text='Importar do simbrief', font=('Arial', 14, 'bold'), text_color='black', fg_color='lightgray', cursor='hand2', command=enviar_simbrief)
+btn_simbrief.place(x=400, y=550)
+
+label_simbrief_info = ctk.CTkLabel(app, text='Dados de tempo e volanta não serão preenchidos ao importar do simbrief* ', font=('Arial', 11, 'bold'), text_color='red')
+label_simbrief_info.place(x=185, y=575)
+label_simbrief_info.lower()
 
 
 
