@@ -25,7 +25,7 @@ def enviar_simbrief():
     if response.status_code == 200:
         data = xmltodict.parse(response.content)
         ofp = data.get("OFP", {})
-
+        global tempo_voo
         origem = ofp.get("origin", {})
         destino = ofp.get("destination", {})
         aeronave = ofp.get("aircraft", {})
@@ -46,7 +46,7 @@ def enviar_simbrief():
         entry_chegada.insert(0, f'{destino.get('icao_code')}/{destino.get('iata_code')} - {destino.get('name')}')
         entry_piloto.insert(0, piloto.get('cpt'))
         entry_aeronave.insert(0, f'{aeronave.get('icaocode')} | {aeronave.get('name')} - {gerais.get('icao_airline')}{gerais.get('flight_number')}')
-        entry_dist.insert(0, tempo_voo.get('route_distance'))
+        entry_dist.insert(0, f'{tempo_voo.get('route_distance')}')
         entry_rota.insert('1.0', f'{origem.get('icao_code')}/{origem.get('plan_rwy')} {rota.get('route')} {destino.get('icao_code')}/{destino.get('plan_rwy')}')
         entry_time.insert(0, tempo_format)
 
@@ -66,6 +66,8 @@ WEBHOOK_URL = [dado['url'] for dado in dados][0]
 
 def enviar_para_discord():
 
+    tempo_voo_km = float(tempo_voo.get('route_distance')) * 1.852
+
     mensagem = {
     'ICAO Partida:': entry_partida.get(),
     'ICAO Chegada:': entry_chegada.get(),
@@ -82,7 +84,7 @@ def enviar_para_discord():
         app.after(5000, lambda: label_erro.configure(text=""))
     
     else:
-        mensagem_format = f'🛫 ICAO PARTIDA: {mensagem["ICAO Partida:"]}\n🛬 ICAO CHEGADA: {mensagem["ICAO Chegada:"]}\n👨‍✈️ COMANDANTE: {mensagem['Piloto: ']}\n💺 AERONAVE: {mensagem["Aeronave:"]}\n🌍 DISTANCIA: {mensagem["Distancia:"]} NM\n🕐 TEMPO: {mensagem["Tempo:"]}\n📋 VOLANTA: {mensagem["Volanta:"]}\n🧭 ROTA: {mensagem["Rota"]}'
+        mensagem_format = f'🛫 ICAO PARTIDA: {mensagem["ICAO Partida:"]}\n🛬 ICAO CHEGADA: {mensagem["ICAO Chegada:"]}\n👨‍✈️ COMANDANTE: {mensagem['Piloto: ']}\n💺 AERONAVE: {mensagem["Aeronave:"]}\n🌍 DISTÂNCIA: {mensagem["Distancia:"]} NM ≈ {tempo_voo_km:.3f} KM\n🕐 TEMPO: {mensagem["Tempo:"]}\n📋 VOLANTA: {mensagem["Volanta:"]}\n🧭 ROTA: {mensagem["Rota"]}'
 
         payload = {
             "embeds": [
@@ -131,7 +133,7 @@ label_piloto.place(x=20, y=130)
 label_aeronave = ctk.CTkLabel(app, text='Aeronave:* ', font=('Arial', 16, 'bold'), text_color='black')
 label_aeronave.place(x=20, y=180)
 
-label_dist = ctk.CTkLabel(app, text='Distancia (NM):* ', font=('Arial', 16, 'bold'), text_color='black')
+label_dist = ctk.CTkLabel(app, text='Distância (NM):* ', font=('Arial', 16, 'bold'), text_color='black')
 label_dist.place(x=20, y=230)
 
 label_dist_info = ctk.CTkLabel(app, text='Apenas números* ', font=('Arial', 11, 'bold'), text_color='red')
