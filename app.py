@@ -97,11 +97,11 @@ def enviar_para_discord():
         }
         response = requests.post(WEBHOOK_URL, json=payload)
         if response.status_code != 204:
-            label_erro_disc.configure(text='Erro ao enviar ao discord, webhook inexistente ou errado\n verifique no arquivo webhook.json')
+            label_simbrief_info.configure(text='Erro ao enviar ao discord, webhook inexistente ou errado\n verifique no arquivo webhook.json')
             app.after(5000, lambda: label_erro.configure(text=""))
         else:
-            label_erro_disc.configure(text='Enviado ao discord com sucesso!', text_color = 'green')
-            app.after(5000, lambda: label_erro_disc.configure(text=""))
+            label_simbrief_info.configure(text='Enviado ao discord com sucesso!', text_color = 'green')
+            app.after(5000, lambda: label_simbrief_info.configure(text=""))
 
 
 
@@ -148,6 +148,9 @@ label_time_info.place(x=330, y=280)
 label_volanta = ctk.CTkLabel(app, text='Volanta: ', font=('Arial', 16, 'bold'), text_color='black')
 label_volanta.place(x=20, y=330)
 
+label_volanta_info = ctk.CTkLabel(app, text='Insira o link manualmente* ', font=('Arial', 11, 'bold'), text_color='red')
+label_volanta_info.place(x=690, y=330)
+
 label_rota = ctk.CTkLabel(app, text='Rota: ', font=('Arial', 16, 'bold'), text_color='black')
 label_rota.place(x=20, y=380)
 
@@ -184,6 +187,7 @@ entry_time.place(x=100, y=280)
 
 entry_volanta = ctk.CTkEntry(app, width=580, text_color='black', fg_color='transparent', font=('Arial', 16, 'bold'), border_width=2, border_color='#B8BDB5')
 entry_volanta.place(x=100, y=330)
+entry_volanta.insert(0, 'SEM DADOS')
 
 entry_rota = ctk.CTkTextbox(app, width=580, height=160, text_color='black', border_color='#B8BDB5', border_width=2, font=('Arial', 16, 'bold'), fg_color='transparent')
 entry_rota.place(x=100, y=380)
@@ -197,7 +201,7 @@ btn_simbrief.place(x=313, y=550)
 btn_limpar = ctk.CTkButton(app, text='Limpar os campos', font=('Arial', 14, 'bold'), text_color='black', fg_color='yellow', cursor='hand2', command=limpar_dados)
 btn_limpar.place(x=500, y=550)
 
-label_simbrief_info = ctk.CTkLabel(app, text='Ao importar do simbrief, link do volanta deve ser preenchido manualmente* ', font=('Arial', 11, 'bold'), text_color='red')
+label_simbrief_info = ctk.CTkLabel(app, text='', font=('Arial', 11, 'bold'), text_color='red')
 label_simbrief_info.place(x=185, y=575)
 label_simbrief_info.lower()
 
