@@ -50,7 +50,7 @@ def enviar_simbrief():
         entry_dist.insert(0, f'{tempo_voo.get('route_distance')}')
         entry_rota.insert('1.0', f'{origem.get('icao_code')}/{origem.get('plan_rwy')} {rota.get('route')} {destino.get('icao_code')}/{destino.get('plan_rwy')}')
         entry_time.insert(0, tempo_format)
-        print(f'https://www.simbrief.com/ofp/flightplans/{pdf.get('pdf')['link']}')
+        entry_briefing.insert(0, f'https://www.simbrief.com/ofp/flightplans/{pdf.get('pdf')['link']}')
 
 def limpar_dados():
     entry_partida.delete(0, 'end')
@@ -61,6 +61,7 @@ def limpar_dados():
     entry_time.delete(0, 'end')
     entry_volanta.delete(0, 'end')
     entry_rota.delete('1.0', 'end')
+    entry_briefing.delete(0, 'end')
         
 
 WEBHOOK_URL = [dado['url'] for dado in dados][0]
@@ -78,6 +79,7 @@ def enviar_para_discord():
     'Distancia:': entry_dist.get(),
     'Tempo:': entry_time.get(),
     'Rota': entry_rota.get('1.0', 'end'),
+    'Briefing OFP': entry_briefing.get(),
     'Volanta:': entry_volanta.get()
     }
 
@@ -86,7 +88,7 @@ def enviar_para_discord():
         app.after(5000, lambda: label_erro.configure(text=""))
     
     else:
-        mensagem_format = f'🛫 ICAO PARTIDA: {mensagem["ICAO Partida:"]}\n🛬 ICAO CHEGADA: {mensagem["ICAO Chegada:"]}\n👨‍✈️ COMANDANTE: {mensagem['Piloto: ']}\n💺 AERONAVE: {mensagem["Aeronave:"]}\n🌍 DISTÂNCIA: {mensagem["Distancia:"]} NM ≈ {tempo_voo_km:.3f} KM\n🕐 TEMPO: {mensagem["Tempo:"]}\n📋 VOLANTA: {mensagem["Volanta:"]}\n🧭 ROTA: {mensagem["Rota"]}'
+        mensagem_format = f'🛫 ICAO PARTIDA: {mensagem["ICAO Partida:"]}\n🛬 ICAO CHEGADA: {mensagem["ICAO Chegada:"]}\n👨‍✈️ COMANDANTE: {mensagem['Piloto: ']}\n💺 AERONAVE: {mensagem["Aeronave:"]}\n🌍 DISTÂNCIA: {mensagem["Distancia:"]} NM ≈ {tempo_voo_km:.3f} KM\n🕐 TEMPO: {mensagem["Tempo:"]}\n📋 VOLANTA: {mensagem["Volanta:"]}\n🖨️ BRIEFING OFP: {mensagem["Briefing OFP"]}\n🧭 ROTA: {mensagem["Rota"]}'
 
         payload = {
             "embeds": [
@@ -111,7 +113,7 @@ titulo = 'MSFS 2020'
 
 
 
-app.geometry('900x600')
+app.geometry('900x730')
 app.resizable(False, False)
 app._set_appearance_mode('Light')
 app.title('Registro de Voos - Microsoft Flight Simulator')
@@ -153,21 +155,24 @@ label_volanta.place(x=20, y=330)
 label_volanta_info = ctk.CTkLabel(app, text='Insira o link manualmente* ', font=('Arial', 11, 'bold'), text_color='red')
 label_volanta_info.place(x=690, y=330)
 
+label_briefing = ctk.CTkLabel(app, text='Briefing: ', font=('Arial', 16, 'bold'), text_color='black')
+label_briefing.place(x=20, y=380)
+
 label_rota = ctk.CTkLabel(app, text='Rota: ', font=('Arial', 16, 'bold'), text_color='black')
-label_rota.place(x=20, y=380)
+label_rota.place(x=20, y=430)
 
 label_cred_1 = ctk.CTkLabel(app, text='Desenvolvido por: ', font=('Arial', 13, 'bold'), text_color='red', bg_color='transparent')
-label_cred_1.place(x=20, y=540)
+label_cred_1.place(x=20, y=660)
 
 label_dev = ctk.CTkLabel(app, text='AnonymousBR ', font=('Arial', 13, 'bold'), text_color='teal', bg_color= 'transparent')
-label_dev.place(x=20, y=560)
+label_dev.place(x=20, y=680)
 label_dev.lower()
 
 label_erro = ctk.CTkLabel(app, text='', font=('Arial', 13, 'bold'), text_color='red')
-label_erro.place(x=700, y=420)
+label_erro.place(x=300, y=670)
 
 label_erro_disc = ctk.CTkLabel(app, text='', font=('Arial', 13, 'bold'), text_color='red')
-label_erro_disc.place(x=450, y=550)
+label_erro_disc.place(x=300, y=670)
 
 entry_partida = ctk.CTkEntry(app, width=450, text_color='black', fg_color='transparent', font=('Arial', 16, 'bold'), border_width=2, border_color='#B8BDB5')
 entry_partida.place(x=132, y=30)
@@ -191,17 +196,20 @@ entry_volanta = ctk.CTkEntry(app, width=580, text_color='black', fg_color='trans
 entry_volanta.place(x=100, y=330)
 entry_volanta.insert(0, 'SEM DADOS')
 
+entry_briefing = ctk.CTkEntry(app, width=590, text_color='black', fg_color='transparent', font=('Arial', 16, 'bold'), border_width=2, border_color='#B8BDB5')
+entry_briefing.place(x=100, y=380)
+
 entry_rota = ctk.CTkTextbox(app, width=580, height=160, text_color='black', border_color='#B8BDB5', border_width=2, font=('Arial', 16, 'bold'), fg_color='transparent')
-entry_rota.place(x=100, y=380)
+entry_rota.place(x=100, y=430)
 
 btn_enviar = ctk.CTkButton(app, width=120, text='Enviar', font=('Arial', 14, 'bold'), text_color='white', fg_color='green', cursor='hand2', command=enviar_para_discord)
-btn_enviar.place(x=150, y=550)
+btn_enviar.place(x=150, y=620)
 
 btn_simbrief = ctk.CTkButton(app, text='Importar do simbrief', font=('Arial', 14, 'bold'), text_color='black', fg_color='lightgray', cursor='hand2', command=enviar_simbrief)
-btn_simbrief.place(x=313, y=550)
+btn_simbrief.place(x=313, y=620)
 
 btn_limpar = ctk.CTkButton(app, text='Limpar os campos', font=('Arial', 14, 'bold'), text_color='black', fg_color='yellow', cursor='hand2', command=limpar_dados)
-btn_limpar.place(x=500, y=550)
+btn_limpar.place(x=500, y=620)
 
 label_simbrief_info = ctk.CTkLabel(app, text='', font=('Arial', 11, 'bold'), text_color='red')
 label_simbrief_info.place(x=185, y=575)
