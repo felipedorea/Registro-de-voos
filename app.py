@@ -33,6 +33,7 @@ def enviar_simbrief():
         rota = ofp.get("atc", {})
         piloto = ofp.get("crew", {})
         tempo = ofp.get("times", {})
+        pdf = ofp.get("files", {})
 
         gerais = ofp.get("general", {})
 
@@ -49,6 +50,7 @@ def enviar_simbrief():
         entry_dist.insert(0, f'{tempo_voo.get('route_distance')}')
         entry_rota.insert('1.0', f'{origem.get('icao_code')}/{origem.get('plan_rwy')} {rota.get('route')} {destino.get('icao_code')}/{destino.get('plan_rwy')}')
         entry_time.insert(0, tempo_format)
+        print(f'https://www.simbrief.com/ofp/flightplans/{pdf.get('pdf')['link']}')
 
 def limpar_dados():
     entry_partida.delete(0, 'end')
