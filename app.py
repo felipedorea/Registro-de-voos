@@ -59,9 +59,11 @@ def limpar_dados():
     entry_aeronave.delete(0, 'end')
     entry_dist.delete(0, 'end')
     entry_time.delete(0, 'end')
-    entry_volanta.delete(0, 'end')
     entry_rota.delete('1.0', 'end')
     entry_briefing.delete(0, 'end')
+
+def limpar_volanta():
+    entry_volanta.delete(0, 'end')
         
 
 WEBHOOK_URL = [dado['url'] for dado in dados][0]
@@ -152,6 +154,9 @@ label_time_info.place(x=330, y=280)
 label_volanta = ctk.CTkLabel(app, text='Volanta: ', font=('Arial', 16, 'bold'), text_color='black')
 label_volanta.place(x=20, y=330)
 
+btn_volanta = ctk.CTkButton(app, text='Apagar', width=55, height=10, font=('Arial', 12, 'bold'), text_color='red', fg_color='transparent', cursor='hand2', hover='False', border_spacing=0, command=limpar_volanta)
+btn_volanta.place(x=625, y=308)
+
 label_volanta_info = ctk.CTkLabel(app, text='Insira o link manualmente* ', font=('Arial', 11, 'bold'), text_color='red')
 label_volanta_info.place(x=690, y=330)
 
@@ -214,6 +219,10 @@ btn_limpar.place(x=500, y=620)
 label_simbrief_info = ctk.CTkLabel(app, text='', font=('Arial', 11, 'bold'), text_color='red')
 label_simbrief_info.place(x=185, y=575)
 label_simbrief_info.lower()
+
+label_apagar_info = ctk.CTkLabel(app, text='Volanta não é apagado ', font=('Arial', 11, 'bold'), text_color='red', fg_color='transparent')
+label_apagar_info.place(x=507, y=650)
+label_apagar_info.lower()
 
 
 
