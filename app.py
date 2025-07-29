@@ -94,7 +94,7 @@ def enviar_para_discord():
             "embeds": [
                 {
                     "title": '🛫🛫 Registro de Voos',
-                    "description": f"```\n{mensagem_format}\n```",
+                    "description": mensagem_format,
                     "color": 3447003
                 }
             ]
