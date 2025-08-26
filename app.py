@@ -80,7 +80,7 @@ def enviar_para_discord():
     mensagem = {
     'ICAO Partida:': entry_partida.get(),
     'ICAO Chegada:': entry_chegada.get(),
-    'Piloto: ': entry_piloto.get(),
+    'Piloto:': entry_piloto.get(),
     'Aeronave:': entry_aeronave.get(),
     'Distancia:': entry_dist.get(),
     'Tempo:': entry_time.get(),
@@ -95,18 +95,45 @@ def enviar_para_discord():
         app.after(5000, lambda: label_erro.configure(text=""))
     
     else:
-        mensagem_format = f'🛫 ICAO PARTIDA: {mensagem["ICAO Partida:"]}\n🛬 ICAO CHEGADA: {mensagem["ICAO Chegada:"]}\n👨‍✈️ COMANDANTE: {mensagem['Piloto: ']}\n💺 AERONAVE: {mensagem["Aeronave:"]}\n🌍 DISTÂNCIA: {mensagem["Distancia:"]} NM ≈ {tempo_voo_km:.3f} KM\n🕐 TEMPO: {mensagem["Tempo:"]}\n📋 VOLANTA: {mensagem["Volanta:"]}\n🖨️ BRIEFING OFP: {mensagem["Briefing OFP"]}\n🧭 ROTA: {mensagem["Rota"]}\n💵 RENDA: {mensagem["Renda"]}'
+    #     mensagem_format = f'🛫 ICAO PARTIDA: {mensagem["ICAO Partida:"]}\n🛬 ICAO CHEGADA: {mensagem["ICAO Chegada:"]}\n👨‍✈️ COMANDANTE: {mensagem['Piloto: ']}\n💺 AERONAVE: {mensagem["Aeronave:"]}\n🌍 DISTÂNCIA: {mensagem["Distancia:"]} NM ≈ {tempo_voo_km:.3f} KM\n🕐 TEMPO: {mensagem["Tempo:"]}\n📋 VOLANTA: {mensagem["Volanta:"]}\n🖨️ BRIEFING OFP: {mensagem["Briefing OFP"]}\n🧭 ROTA: {mensagem["Rota"]}\n💵 RENDA: {mensagem["Renda"]}'
 
-        payload = {
+        data = {
             "embeds": [
                 {
                     "title": '🛫🛫 Registro de Voos',
-                    "description": mensagem_format,
+                    "fields": [ {"name": "", "value": '', "inline": False},
+                                {"name": "**AEROPORTO PARTIDA**", "value": f'{mensagem["ICAO Partida:"]}', "inline": True}, 
+                               {"name": "", "value": '', "inline": True},
+                               {"name": "**AEROPORTO CHEGADA**", "value": f'{mensagem["ICAO Chegada:"]}', "inline": True},
+                               {"name": "**⚙️ DADOS GERAIS**", "value": '', "inline": True},
+                               {"name": "", "value": '', "inline": True},
+                               {"name": "", "value": '', "inline": True},
+                               {"name": "", "value": (
+                                   f'**Comandante:** {mensagem["Piloto:"]}\n'
+                                   f'**Aeronave:** {mensagem["Aeronave:"]}\n'
+                                   f'**Distancia:** {mensagem["Distancia:"]} NM ≈ {tempo_voo_km:.3f} KM\n'
+                                   f'**Tempo:** {mensagem["Tempo:"]}\n'
+                                   f'**Renda:** {mensagem["Renda"]}\n'
+                                   f'**Rota:** {mensagem["Rota"]}\n'
+                                   ), 
+                                   "inline": False},
+                                {"name": "**🔗 LINKS**", "value": '', "inline": True},
+                                {"name": "", "value": '', "inline": True},
+                                {"name": "", "value": '', "inline": True},
+                                {"name": "", "value": (
+                                   f'**Volanta:** {mensagem["Volanta:"]}\n'
+                                   f'**Briefing OFP:** {mensagem["Briefing OFP"]}\n'
+                                   ), 
+                                   "inline": False}
+                               ],
+                    "footer": {
+                        "text": "Feito por AnonymousBR",
+                    },
                     "color": 3447003
                 }
             ]
         }
-        response = requests.post(WEBHOOK_URL, json=payload)
+        response = requests.post(WEBHOOK_URL, json=data)
         if response.status_code != 204:
             label_simbrief_info.configure(text='Erro ao enviar ao discord, webhook inexistente ou errado\n verifique no arquivo webhook.json')
             app.after(5000, lambda: label_erro.configure(text=""))
