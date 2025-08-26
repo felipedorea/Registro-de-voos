@@ -21,6 +21,7 @@ url = f"https://www.simbrief.com/api/xml.fetcher.php?username={username}"
 response = requests.get(url)
 
 def enviar_simbrief():
+    global tas_nu
 
     if response.status_code == 200:
         data = xmltodict.parse(response.content)
@@ -34,6 +35,9 @@ def enviar_simbrief():
         piloto = ofp.get("crew", {})
         tempo = ofp.get("times", {})
         pdf = ofp.get("files", {})
+        tas = ofp.get("general", {})
+        tas_nu = f'{tas.get('cruise_tas')}'
+        
 
         gerais = ofp.get("general", {})
 
@@ -82,7 +86,8 @@ def enviar_para_discord():
     'Tempo:': entry_time.get(),
     'Rota': entry_rota.get('1.0', 'end'),
     'Briefing OFP': entry_briefing.get(),
-    'Volanta:': entry_volanta.get()
+    'Volanta:': entry_volanta.get(),
+    'Renda': f'R$ {((int(entry_dist.get()) / int(tas_nu)) * 250):.2f}'.replace('.', ',')
     }
 
     if mensagem['ICAO Chegada:'] == '' or mensagem['ICAO Partida:'] == '' or mensagem['Aeronave:'] == '' or mensagem['Distancia:'] == '' or mensagem['Tempo:'] == '':
@@ -90,7 +95,7 @@ def enviar_para_discord():
         app.after(5000, lambda: label_erro.configure(text=""))
     
     else:
-        mensagem_format = f'🛫 ICAO PARTIDA: {mensagem["ICAO Partida:"]}\n🛬 ICAO CHEGADA: {mensagem["ICAO Chegada:"]}\n👨‍✈️ COMANDANTE: {mensagem['Piloto: ']}\n💺 AERONAVE: {mensagem["Aeronave:"]}\n🌍 DISTÂNCIA: {mensagem["Distancia:"]} NM ≈ {tempo_voo_km:.3f} KM\n🕐 TEMPO: {mensagem["Tempo:"]}\n📋 VOLANTA: {mensagem["Volanta:"]}\n🖨️ BRIEFING OFP: {mensagem["Briefing OFP"]}\n🧭 ROTA: {mensagem["Rota"]}'
+        mensagem_format = f'🛫 ICAO PARTIDA: {mensagem["ICAO Partida:"]}\n🛬 ICAO CHEGADA: {mensagem["ICAO Chegada:"]}\n👨‍✈️ COMANDANTE: {mensagem['Piloto: ']}\n💺 AERONAVE: {mensagem["Aeronave:"]}\n🌍 DISTÂNCIA: {mensagem["Distancia:"]} NM ≈ {tempo_voo_km:.3f} KM\n🕐 TEMPO: {mensagem["Tempo:"]}\n📋 VOLANTA: {mensagem["Volanta:"]}\n🖨️ BRIEFING OFP: {mensagem["Briefing OFP"]}\n🧭 ROTA: {mensagem["Rota"]}\n💵 RENDA: {mensagem["Renda"]}'
 
         payload = {
             "embeds": [
