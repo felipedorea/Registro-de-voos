@@ -80,7 +80,7 @@ def enviar_para_discord():
     mensagem = {
     'ICAO Partida:': entry_partida.get(),
     'ICAO Chegada:': entry_chegada.get(),
-    'Piloto: ': entry_piloto.get(),
+    'Piloto:': entry_piloto.get(),
     'Aeronave:': entry_aeronave.get(),
     'Distancia:': entry_dist.get(),
     'Tempo:': entry_time.get(),
@@ -101,11 +101,34 @@ def enviar_para_discord():
             "embeds": [
                 {
                     "title": '🛫🛫 Registro de Voos',
-                    # "description": mensagem_format,
-                    "fields": [{"name": "**ICAO PARTIDA**", "value": f'{mensagem["ICAO Partida:"]}', "inline": True}, 
+                    "fields": [ {"name": "", "value": '', "inline": False},
+                                {"name": "**AEROPORTO PARTIDA**", "value": f'{mensagem["ICAO Partida:"]}', "inline": True}, 
                                {"name": "", "value": '', "inline": True},
-                               {"name": "ICAO CHEGADA", "value": f'{mensagem["ICAO Chegada:"]}', "inline": True}
+                               {"name": "**AEROPORTO CHEGADA**", "value": f'{mensagem["ICAO Chegada:"]}', "inline": True},
+                               {"name": "**⚙️ DADOS GERAIS**", "value": '', "inline": True},
+                               {"name": "", "value": '', "inline": True},
+                               {"name": "", "value": '', "inline": True},
+                               {"name": "", "value": (
+                                   f'**Comandante:** {mensagem["Piloto:"]}\n'
+                                   f'**Aeronave:** {mensagem["Aeronave:"]}\n'
+                                   f'**Distancia:** {mensagem["Distancia:"]} NM ≈ {tempo_voo_km:.3f} KM\n'
+                                   f'**Tempo:** {mensagem["Tempo:"]}\n'
+                                   f'**Renda:** {mensagem["Renda"]}\n'
+                                   f'**Rota:** {mensagem["Rota"]}\n'
+                                   ), 
+                                   "inline": False},
+                                {"name": "**🔗 LINKS**", "value": '', "inline": True},
+                                {"name": "", "value": '', "inline": True},
+                                {"name": "", "value": '', "inline": True},
+                                {"name": "", "value": (
+                                   f'**Volanta:** {mensagem["Volanta:"]}\n'
+                                   f'**Briefing OFP:** {mensagem["Briefing OFP"]}\n'
+                                   ), 
+                                   "inline": False}
                                ],
+                    "footer": {
+                        "text": "Feito por AnonymousBR",
+                    },
                     "color": 3447003
                 }
             ]
