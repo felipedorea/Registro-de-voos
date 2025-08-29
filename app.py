@@ -100,7 +100,10 @@ def enviar_para_discord():
         data = {
             "embeds": [
                 {
-                    "title": '🛫🛫 Registro de Voos',
+                    "title": '📊 | Relatório de Voo',
+                    "thumbnail": {
+                        "url": "https://cdn.discordapp.com/attachments/1361363478199406662/1410969790113255564/cb87e9f32afe55dc06d4e92f70e256ae1d6c9f0c.png?ex=68b2f384&is=68b1a204&hm=cdb579ab3be1a8dc051297058acdae7a930026884e4f3c497a98910d20aab586"
+                    },
                     "fields": [ {"name": "", "value": '', "inline": False},
                                 {"name": "**AEROPORTO PARTIDA**", "value": f'{mensagem["ICAO Partida:"]}', "inline": True}, 
                                {"name": "", "value": '', "inline": True},
@@ -127,7 +130,7 @@ def enviar_para_discord():
                                    "inline": False}
                                ],
                     "footer": {
-                        "text": "Feito por AnonymousBR",
+                        "text": "Desenvolvido por AnonymousBR",
                     },
                     "color": 3447003
                 }
@@ -135,8 +138,9 @@ def enviar_para_discord():
         }
         response = requests.post(WEBHOOK_URL, json=data)
         if response.status_code != 204:
-            label_simbrief_info.configure(text='Erro ao enviar ao discord, webhook inexistente ou errado\n verifique no arquivo webhook.json')
-            app.after(5000, lambda: label_erro.configure(text=""))
+            label_simbrief_info.configure(text='Erro ao enviar ao discord, webhook inexistente ou errado!')
+            label_simbrief_info.place(x=240, y=590)
+            app.after(5000, lambda: label_simbrief_info.configure(text=""))
         else:
             label_simbrief_info.configure(text='Enviado ao discord com sucesso!', text_color = 'green')
             app.after(5000, lambda: label_simbrief_info.configure(text=""))
@@ -249,7 +253,7 @@ btn_limpar = ctk.CTkButton(app, text='Limpar os campos', font=('Arial', 14, 'bol
 btn_limpar.place(x=500, y=620)
 
 label_simbrief_info = ctk.CTkLabel(app, text='', font=('Arial', 11, 'bold'), text_color='red')
-label_simbrief_info.place(x=185, y=575)
+label_simbrief_info.place(x=300, y=590)
 label_simbrief_info.lower()
 
 label_apagar_info = ctk.CTkLabel(app, text='Volanta não é apagado ', font=('Arial', 11, 'bold'), text_color='red', fg_color='transparent')
