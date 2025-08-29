@@ -3,7 +3,11 @@ import customtkinter as ctk
 import json
 from PIL import Image
 import xmltodict
+import pandas as pd
+from pathlib import Path
+from datetime import datetime
 
+    
 
 
 
@@ -75,6 +79,25 @@ WEBHOOK_URL = [dado['url'] for dado in dados][0]
 
 def enviar_para_discord():
 
+    doc = Path.home() / "Documents"
+    p_gees = "MyMSFS2020Landings-Gees"
+    gees = doc / p_gees / "Landings.v3.csv"
+
+    if gees.exists():
+        df = pd.read_csv(gees)
+
+        ultima_linha = df.iloc[-1]
+
+        data_csv = pd.to_datetime(ultima_linha["Time"]).date()
+
+        today = datetime.now().date()
+
+        if data_csv == today:
+            fpm = ultima_linha["FPM"]
+        else:
+            fpm = "Sem dados"
+    
+
     tempo_voo_km = float(tempo_voo.get('route_distance')) * 1.852
 
     mensagem = {
@@ -87,8 +110,12 @@ def enviar_para_discord():
     'Rota': entry_rota.get('1.0', 'end'),
     'Briefing OFP': entry_briefing.get(),
     'Volanta:': entry_volanta.get(),
-    'Renda': f'R$ {((int(entry_dist.get()) / int(tas_nu)) * 250):.2f}'.replace('.', ',')
+    'Renda': f'R$ {((int(entry_dist.get()) / int(tas_nu)) * 250):.2f}'.replace('.', ','),
+    'Gees': fpm
     }
+
+
+
 
     if mensagem['ICAO Chegada:'] == '' or mensagem['ICAO Partida:'] == '' or mensagem['Aeronave:'] == '' or mensagem['Distancia:'] == '' or mensagem['Tempo:'] == '':
         label_erro.configure(text='Insira todos os dados com *')
@@ -100,7 +127,7 @@ def enviar_para_discord():
         data = {
             "embeds": [
                 {
-                    "title": '📊 | Relatório de Voo',
+                    "title": f'📊 | Relatório de Voo | {today.strftime("%d/%m/%Y")}',
                     "thumbnail": {
                         "url": "https://cdn.discordapp.com/attachments/1361363478199406662/1410969790113255564/cb87e9f32afe55dc06d4e92f70e256ae1d6c9f0c.png?ex=68b2f384&is=68b1a204&hm=cdb579ab3be1a8dc051297058acdae7a930026884e4f3c497a98910d20aab586"
                     },
@@ -117,6 +144,7 @@ def enviar_para_discord():
                                    f'**Distancia:** {mensagem["Distancia:"]} NM ≈ {tempo_voo_km:.3f} KM\n'
                                    f'**Tempo:** {mensagem["Tempo:"]}\n'
                                    f'**Renda:** {mensagem["Renda"]}\n'
+                                   f'**Pouso(fpm):** {mensagem["Gees"]}\n'
                                    f'**Rota:** {mensagem["Rota"]}\n'
                                    ), 
                                    "inline": False},
