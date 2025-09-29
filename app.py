@@ -58,7 +58,7 @@ def enviar_simbrief():
         entry_dist.insert(0, f'{tempo_voo.get('route_distance')}')
         entry_rota.insert('1.0', f'{origem.get('icao_code')}/{origem.get('plan_rwy')} {rota.get('route')} {destino.get('icao_code')}/{destino.get('plan_rwy')}')
         entry_time.insert(0, tempo_format)
-        entry_briefing.insert(0, f'https://www.simbrief.com/ofp/flightplans/{pdf.get('pdf')['link']}')
+        # entry_briefing.insert(0, f'https://www.simbrief.com/ofp/flightplans/{pdf.get('pdf')['link']}')
 
 def limpar_dados():
     entry_partida.delete(0, 'end')
@@ -68,7 +68,7 @@ def limpar_dados():
     entry_dist.delete(0, 'end')
     entry_time.delete(0, 'end')
     entry_rota.delete('1.0', 'end')
-    entry_briefing.delete(0, 'end')
+    # entry_briefing.delete(0, 'end')
 
 def limpar_volanta():
     entry_volanta.delete(0, 'end')
@@ -108,7 +108,7 @@ def enviar_para_discord():
     'Distancia:': entry_dist.get(),
     'Tempo:': entry_time.get(),
     'Rota': entry_rota.get('1.0', 'end'),
-    'Briefing OFP': entry_briefing.get(),
+    # 'Briefing OFP': entry_briefing.get(),
     'Volanta:': entry_volanta.get(),
     'Renda': f'R$ {((int(entry_dist.get()) / int(tas_nu)) * 250):.2f}'.replace('.', ','),
     'Gees': fpm
@@ -153,7 +153,7 @@ def enviar_para_discord():
                                 {"name": "", "value": '', "inline": True},
                                 {"name": "", "value": (
                                    f'**Volanta:** {mensagem["Volanta:"]}\n'
-                                   f'**Briefing OFP:** {mensagem["Briefing OFP"]}\n'
+                                #    f'**Briefing OFP:** {mensagem["Briefing OFP"]}\n'
                                    ), 
                                    "inline": False}
                                ],
@@ -233,9 +233,13 @@ label_rota.place(x=20, y=430)
 label_cred_1 = ctk.CTkLabel(app, text='Desenvolvido por: ', font=('Arial', 13, 'bold'), text_color='red', bg_color='transparent')
 label_cred_1.place(x=20, y=660)
 
-label_dev = ctk.CTkLabel(app, text='AnonymousBR ', font=('Arial', 13, 'bold'), text_color='teal', bg_color= 'transparent')
+label_dev = ctk.CTkLabel(app, text='AnonymousBR', font=('Arial', 13, 'bold'), text_color='teal', bg_color= 'transparent')
 label_dev.place(x=20, y=680)
 label_dev.lower()
+
+label_vers = ctk.CTkLabel(app, text='Versão 1.5.4', font=('Arial', 13, 'bold'), text_color="#FA4C0D", bg_color= 'transparent')
+label_vers.place(x=20, y=700)
+label_vers.lower()
 
 label_erro = ctk.CTkLabel(app, text='', font=('Arial', 13, 'bold'), text_color='red')
 label_erro.place(x=300, y=670)
@@ -265,8 +269,10 @@ entry_volanta = ctk.CTkEntry(app, width=580, text_color='black', fg_color='trans
 entry_volanta.place(x=100, y=330)
 entry_volanta.insert(0, 'SEM DADOS')
 
-entry_briefing = ctk.CTkEntry(app, width=590, text_color='black', fg_color='transparent', font=('Arial', 16, 'bold'), border_width=2, border_color='#B8BDB5')
+entry_briefing = ctk.CTkEntry(app, width=590, placeholder_text='Desativado', fg_color='lightgray', text_color='black', font=('Arial', 16, 'bold'), border_width=2, border_color='#B8BDB5')
 entry_briefing.place(x=100, y=380)
+# entry_briefing.insert(0, 'Desativado')
+entry_briefing.configure(state='disabled')
 
 entry_rota = ctk.CTkTextbox(app, width=580, height=160, text_color='black', border_color='#B8BDB5', border_width=2, font=('Arial', 16, 'bold'), fg_color='transparent')
 entry_rota.place(x=100, y=430)
