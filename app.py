@@ -240,7 +240,7 @@ label_dev = ctk.CTkLabel(app, text='AnonymousBR', font=('Arial', 13, 'bold'), te
 label_dev.place(x=20, y=680)
 label_dev.lower()
 
-label_vers = ctk.CTkLabel(app, text='Versão 1.5.4', font=('Arial', 13, 'bold'), text_color="#FA4C0D", bg_color= 'transparent')
+label_vers = ctk.CTkLabel(app, text='Versão 1.5.5', font=('Arial', 13, 'bold'), text_color="#FA4C0D", bg_color= 'transparent')
 label_vers.place(x=20, y=700)
 label_vers.lower()
 
