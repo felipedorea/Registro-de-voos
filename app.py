@@ -16,11 +16,12 @@ app = ctk.CTk()
 
 
 
-with open('webhook.json', 'r') as arquivo:
+with open('config.json', 'r') as arquivo:
     dados = json.load(arquivo)
 
 username = [dado['simbrief'] for dado in dados][0]
 url = f"https://www.simbrief.com/api/xml.fetcher.php?username={username}"
+
 
 response = requests.get(url)
 
@@ -75,27 +76,29 @@ def limpar_volanta():
         
 
 WEBHOOK_URL = [dado['url'] for dado in dados][0]
-
+gees_dado = [dado['gees'] for dado in dados][0]
 
 def enviar_para_discord():
 
-    # doc = Path.home() / "Documents"
-    # p_gees = "MyMSFS2020Landings-Gees"
-    # gees = doc / p_gees / "Landings.v3.csv"
+    if gees_dado == 1:
+        doc = Path.home() / "Documents"
+        p_gees = "MyMSFS2020Landings-Gees"
+        gees = doc / p_gees / "Landings.v3.csv"
+        df = pd.read_csv(gees)
 
-    # if gees.exists():
-    #     df = pd.read_csv(gees)
+        ultima_linha = df.iloc[-1]
 
-    #     ultima_linha = df.iloc[-1]
+        data_csv = pd.to_datetime(ultima_linha["Time"]).date()
 
-    #     data_csv = pd.to_datetime(ultima_linha["Time"]).date()
+        today = datetime.now().date()
 
-    #     today = datetime.now().date()
+        if data_csv == today:
+            fpm = ultima_linha["FPM"]
+        else:
+            fpm = "Sem dados 2"
 
-    #     if data_csv == today:
-    #         fpm = ultima_linha["FPM"]
-    #     else:
-    #         fpm = "Sem dados"
+    elif gees_dado == 0:
+        fpm = "Sem dados"
     
 
     tempo_voo_km = float(tempo_voo.get('route_distance')) * 1.852
@@ -111,7 +114,7 @@ def enviar_para_discord():
     # 'Briefing OFP': entry_briefing.get(),
     'Volanta:': entry_volanta.get(),
     'Renda': f'R$ {((int(entry_dist.get()) / int(tas_nu)) * 250):.2f}'.replace('.', ','),
-    # 'Gees': fpm
+    'Gees': fpm
     }
 
 
@@ -144,7 +147,7 @@ def enviar_para_discord():
                                    f'**Distancia:** {mensagem["Distancia:"]} NM ≈ {tempo_voo_km:.3f} KM\n'
                                    f'**Tempo:** {mensagem["Tempo:"]}\n'
                                    f'**Renda:** {mensagem["Renda"]}\n'
-                                #    f'**Pouso(fpm):** {mensagem["Gees"]}\n'
+                                   f'**Pouso(fpm):** {mensagem["Gees"]}\n'
                                    f'**Rota:** {mensagem["Rota"]}\n'
                                    ), 
                                    "inline": False},
